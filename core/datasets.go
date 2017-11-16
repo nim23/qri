@@ -229,9 +229,11 @@ func (r *DatasetRequests) InitDataset(p *InitDatasetParams, res *repo.DatasetRef
 }
 
 type UpdateParams struct {
-	Changes      *dataset.Dataset // all dataset changes. required.
-	DataFilename string           // filename for new data. optional.
-	Data         io.Reader        // stream of complete dataset update. optional.
+	// all dataset changes. required.
+	// This dataset should include pointer to pointer to prev dataset
+	Changes      *dataset.Dataset
+	DataFilename string    // filename for new data. optional.
+	Data         io.Reader // stream of complete dataset update. optional.
 }
 
 // Update adds a history entry, updating a dataset
@@ -242,11 +244,11 @@ func (r *DatasetRequests) Update(p *UpdateParams, res *repo.DatasetRef) (err err
 	)
 	store := r.repo.Store()
 	ds := &dataset.Dataset{}
-
 	rt, ref := dsfs.RefType(p.Changes.Previous.String())
 	// allows using dataset names as "previous" fields
 	if rt == "name" {
 		name = ref
+		fmt.Println(strings.Trim(ref, "/"))
 		prevpath, err = r.repo.GetPath(strings.Trim(ref, "/"))
 		if err != nil {
 			return fmt.Errorf("error getting previous dataset path: %s", err.Error())
@@ -271,6 +273,25 @@ func (r *DatasetRequests) Update(p *UpdateParams, res *repo.DatasetRef) (err err
 		data, err := ioutil.ReadAll(p.Data)
 		if err != nil {
 			return fmt.Errorf("error reading data: %s", err.Error())
+		}
+		// Ensure that datset is well-formed
+		format, err := detect.ExtensionDataFormat(p.DataFilename)
+		if err != nil {
+			return fmt.Errorf("error detecting format extension: %s", err.Error())
+		}
+		if err = validate.DataFormat(format, bytes.NewReader(data)); err != nil {
+			return fmt.Errorf("invalid data format: %s", err.Error())
+		}
+		st, err := detect.FromReader(p.DataFilename, bytes.NewReader(data))
+		if err != nil {
+			return fmt.Errorf("error determining dataset schema: %s", err.Error())
+		}
+		// Ensure that dataset contains valid field names
+		if err = validate.CheckStructure(st); err != nil {
+			return fmt.Errorf("invalid structure: %s", err.Error())
+		}
+		if _, _, err := validate.Data(dsio.NewRowReader(st, bytes.NewReader(data))); err != nil {
+			return fmt.Errorf("data is invalid")
 		}
 
 		path, err := store.Put(memfs.NewMemfileReader(p.DataFilename, p.Data), false)

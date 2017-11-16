@@ -1,6 +1,8 @@
 package core
 
 import (
+	//"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/ipfs/go-datastore"
@@ -164,6 +166,32 @@ func TestDatasetRequestsUpdate(t *testing.T) {
 		t.Errorf("error allocating test repo: %s", err.Error())
 		return
 	}
+
+	// io readers
+	jobsByAutomationFile := testrepo.JobsByAutomationFile
+	jobsByAutomationFileLower := testrepo.JobsByAutomationFileLower
+	jobsByAutomationFileLower2 := testrepo.JobsByAutomationFileLower2
+	// empty repo.DatasetRef
+	dfRef := &repo.DatasetRef{}
+	// InitDatasetParams
+	p := &InitDatasetParams{DataFilename: jobsByAutomationFile.FileName(), Data: jobsByAutomationFileLower}
+	req := NewDatasetRequests(mr)
+	err = req.InitDataset(p, dfRef)
+	if err != nil {
+		t.Errorf("error creating dataset: %s", err.Error())
+	}
+	ds := dfRef.Dataset
+	prevPath, err := mr.GetPath("movies")
+	if err != nil {
+		t.Errorf("error getting path: %s", err.Error())
+	}
+	// ds, err = mr.GetDataset(prevPath)
+	// if err != nil {
+	// 	t.Errorf("error getting dataset of path %s: %s", prevPath, err.Error())
+	// }
+	ds.Previous = prevPath
+	fmt.Printf("prevPath: %v\n", prevPath)
+	// ds.Previous = datastore.NewKey("movies")
 	// path, err := mr.GetPath("movies")
 	// if err != nil {
 	// 	t.Errorf("error getting path: %s", err.Error())
@@ -179,14 +207,15 @@ func TestDatasetRequestsUpdate(t *testing.T) {
 		res *repo.DatasetRef
 		err string
 	}{
-	//TODO: probably delete some of these
-	// {&UpdateParams{Path: datastore.NewKey("abc"), Name: "ABC", Hash: "123"}, nil, "error loading dataset: error getting file bytes: datastore: key not found"},
-	// {&UpdateParams{Path: path, Name: "ABC", Hash: "123"}, nil, ""},
-	// {&UpdateParams{Path: path, Name: "movies", Hash: "123"}, moviesDs, ""},
-	// {&UpdateParams{Path: path, Name: "cats", Hash: "123"}, moviesDs, ""},
+		//TODO: probably delete some of these
+		{&UpdateParams{Changes: ds, DataFilename: "movies", Data: jobsByAutomationFileLower2}, dfRef, ""},
+		// {&UpdateParams{Path: datastore.NewKey("abc"), Name: "ABC", Hash: "123"}, nil, "error loading dataset: error getting file bytes: datastore: key not found"},
+		// {&UpdateParams{Path: path, Name: "ABC", Hash: "123"}, nil, ""},
+		// {&UpdateParams{Path: path, Name: "movies", Hash: "123"}, moviesDs, ""},
+		// {&UpdateParams{Path: path, Name: "cats", Hash: "123"}, moviesDs, ""},
 	}
 
-	req := NewDatasetRequests(mr)
+	req = NewDatasetRequests(mr)
 	for i, c := range cases {
 		got := &repo.DatasetRef{}
 		err := req.Update(c.p, got)
