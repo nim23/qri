@@ -7,7 +7,7 @@ import (
 	"net/rpc"
 
 	"github.com/datatogether/api/apiutil"
-	"github.com/qri-io/qri/api/handlers"
+	// "github.com/qri-io/qri/api/handlers"
 	"github.com/qri-io/qri/core"
 	"github.com/qri-io/qri/logging"
 	"github.com/qri-io/qri/p2p"
@@ -122,22 +122,22 @@ func NewServerRoutes(s *Server) *http.ServeMux {
 	m.Handle("/status", s.middleware(apiutil.HealthCheckHandler))
 	m.Handle("/ipfs/", s.middleware(s.HandleIPFSPath))
 
-	proh := handlers.NewProfileHandlers(s.log, s.qriNode.Repo)
+	proh := NewProfileHandlers(s.log, s.qriNode.Repo)
 	m.Handle("/profile", s.middleware(proh.ProfileHandler))
 	m.Handle("/profile/photo", s.middleware(proh.SetProfilePhotoHandler))
 	m.Handle("/profile/poster", s.middleware(proh.SetPosterHandler))
 
-	sh := handlers.NewSearchHandlers(s.log, s.qriNode.Repo)
+	sh := NewSearchHandlers(s.log, s.qriNode.Repo)
 	m.Handle("/search", s.middleware(sh.SearchHandler))
 
-	ph := handlers.NewPeerHandlers(s.log, s.qriNode.Repo, s.qriNode)
+	ph := NewPeerHandlers(s.log, s.qriNode.Repo, s.qriNode)
 	m.Handle("/peers", s.middleware(ph.PeersHandler))
 	m.Handle("/peers/", s.middleware(ph.PeerHandler))
 	m.Handle("/connect/", s.middleware(ph.ConnectToPeerHandler))
 	m.Handle("/connections", s.middleware(ph.ConnectionsHandler))
 	m.Handle("/peernamespace/", s.middleware(ph.PeerNamespaceHandler))
 
-	dsh := handlers.NewDatasetHandlers(s.log, s.qriNode.Repo)
+	dsh := NewDatasetHandlers(s.log, s.qriNode.Repo)
 	m.Handle("/datasets", s.middleware(dsh.DatasetsHandler))
 	m.Handle("/datasets/", s.middleware(dsh.DatasetHandler))
 	m.Handle("/add/", s.middleware(dsh.AddDatasetHandler))
@@ -146,10 +146,10 @@ func NewServerRoutes(s *Server) *http.ServeMux {
 	m.Handle("/data/ipfs/", s.middleware(dsh.StructuredDataHandler))
 	m.Handle("/download/", s.middleware(dsh.ZipDatasetHandler))
 
-	hh := handlers.NewHistoryHandlers(s.log, s.qriNode.Repo)
+	hh := NewHistoryHandlers(s.log, s.qriNode.Repo)
 	m.Handle("/history/", s.middleware(hh.LogHandler))
 
-	qh := handlers.NewQueryHandlers(s.log, s.qriNode.Repo)
+	qh := NewQueryHandlers(s.log, s.qriNode.Repo)
 	m.Handle("/queries", s.middleware(qh.ListHandler))
 	m.Handle("/queries/", s.middleware(qh.DatasetQueriesHandler))
 	m.Handle("/run", s.middleware(qh.RunHandler))

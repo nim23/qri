@@ -18,13 +18,48 @@ func TestServerRoutes(t *testing.T) {
 	}{
 		// {"GET", "/", nil, 200},
 		{"GET", "/status", nil, 200},
-		// {"GET", "/datasets", nil, 200},
-		// {"GET", "/ipfs", nil, 200},
-		// {"GET", "/datasets", nil, 200},
-		// {"GET", "/datasets", nil, 200},
-		// {"GET", "/data", nil, 200},
-		// {"GET", "/download", nil, 200},
-		// {"GET", "/run", nil, 200},
+		// {"GET", "/ipfs/", nil, 200},
+
+		// Profile Routes
+		{"GET", "/profile", nil, 200},
+		//{"POST", "/profile", nil, 200},
+		//{"POST", "/profile/photo", nil, 200},
+		//{"PUT", "/profile/photo", nil, 200},
+		//{"POST", "/profile/poster", nil, 200},
+		//{"PUT", "/profile/poster", nil, 200},
+
+		// Search Routes
+		// >>{"GET", "/search", nil, 200},
+		// {"POST", "/search", nil, 200},
+
+		// Peer Routes
+		{"GET", "/peers", nil, 200}, //PeersHandler
+		// >>{"GET", "/peers/", nil, 200},         //PeerHandler
+		// >>{"GET", "/connect/", nil, 200},       //ConnectToPeerHandler
+		// >>{"GET", "/connections", nil, 200},    //ConnectionsHandler
+		// >>{"GET", "/peernamespace/", nil, 200}, //PeerNamespaceHandler
+
+		// Dataset Routes
+		{"GET", "/datasets", nil, 200}, // listDatasetsHandler
+		// {"POST", "/datasets", nil, 200},    // initDatasetsHandler
+		// {"PUT", "/datasets", nil, 200},     // updateDatasetsHandler
+		// >>{"GET", "/datasets/", nil, 200}, // getDatasetHandler
+		// {"PUT", "/datasets/", nil, 200},    // updateDatasetHandler
+		// {"DELETE", "/datasets/", nil, 200}, // deleteDatasetHandler
+		// {"POST", "/add/", nil, 200},        // AddDatasetHandler
+		// {"POST", "/init/", nil, 200},       // InitDatasetHandler
+		// {"POST", "/rename", nil, 200},      // RenameDatasetHandler
+		// {"PUT", "/rename", nil, 200},       // RenameDatasetHandler
+		// {"GET", "/data/ipfs/", nil, 200}, // StructuredDataHandler
+		// {"GET", "/download/", nil, 200},  // ZipDatasetHandler
+
+		// History Routes
+		// >>{"GET", "/history/", nil, 200}, // LogHandler
+
+		// Queries Routes
+		{"GET", "/queries", nil, 200}, // ListHandler
+		// >>{"GET", "/queries/", nil, 200}, // DatasetQueriesHandler
+		// {"POST", "/run", nil, 200},     // RunHandler
 	}
 
 	client := &http.Client{}
