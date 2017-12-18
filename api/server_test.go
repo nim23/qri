@@ -29,7 +29,8 @@ func TestServerRoutes(t *testing.T) {
 		//{"PUT", "/profile/poster", nil, 200},
 
 		// Search Routes
-		// >>{"GET", "/search", nil, 200},
+		// >>{"GET", "/search", nil, 500},
+		//{"GET", "/search", nil, 200},
 		// {"POST", "/search", nil, 200},
 
 		// Peer Routes
@@ -43,7 +44,8 @@ func TestServerRoutes(t *testing.T) {
 		{"GET", "/datasets", nil, 200}, // listDatasetsHandler
 		// {"POST", "/datasets", nil, 200},    // initDatasetsHandler
 		// {"PUT", "/datasets", nil, 200},     // updateDatasetsHandler
-		// >>{"GET", "/datasets/", nil, 200}, // getDatasetHandler
+		{"GET", "/datasets/", nil, 500}, // getDatasetHandler
+		// {"GET", "/datasets/", nil, 200}, // getDatasetHandler
 		// {"PUT", "/datasets/", nil, 200},    // updateDatasetHandler
 		// {"DELETE", "/datasets/", nil, 200}, // deleteDatasetHandler
 		// {"POST", "/add/", nil, 200},        // AddDatasetHandler
@@ -54,7 +56,8 @@ func TestServerRoutes(t *testing.T) {
 		// {"GET", "/download/", nil, 200},  // ZipDatasetHandler
 
 		// History Routes
-		// >>{"GET", "/history/", nil, 200}, // LogHandler
+		// {"GET", "/history/", nil, 500}, // LogHandler
+		// {"GET", "/history/", nil, 200}, // LogHandler
 
 		// Queries Routes
 		{"GET", "/queries", nil, 200}, // ListHandler
