@@ -1,0 +1,5 @@
+{
+	"Name": "newData",
+	"DataFileName": "newData.csv",
+	"Data": "cars,planes\n100,200\n200,300\n"
+}
